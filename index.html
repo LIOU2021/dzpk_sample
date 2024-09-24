@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Texas Hold'em Poker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #2c3e50;
+        }
+        .game-container {
+            background-color: #34495e;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        h1, h2 {
+            color: #ecf0f1;
+        }
+        .card-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .card {
+            width: 60px;
+            height: 90px;
+            background-color: #fff;
+            border-radius: 5px;
+            margin-right: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .card.hidden {
+            background-color: #3498db;
+            color: #3498db;
+        }
+        button {
+            background-color: #2ecc71;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Texas Hold'em Poker</h1>
+        
+        <h2>Community Cards</h2>
+        <div id="communityCards" class="card-container"></div>
+        
+        <h2>Your Hand</h2>
+        <div id="playerHand" class="card-container"></div>
+        
+        <h2>Opponent's Hand</h2>
+        <div id="opponentHand" class="card-container"></div>
+        
+        <div>
+            <button id="newGame">New Game</button>
+            <button id="dealFlop" disabled>Deal Flop</button>
+            <button id="dealTurn" disabled>Deal Turn</button>
+            <button id="dealRiver" disabled>Deal River</button>
+            <button id="showdown" disabled>Showdown</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const suits = ['♠', '♥', '♦', '♣'];
+            const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+            let deck, communityCards, playerHand, opponentHand;
+
+            function createDeck() {
+                return suits.flatMap(suit => ranks.map(rank => ({ suit, rank })));
+            }
+
+            function shuffleDeck(deck) {
+                for (let i = deck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [deck[i], deck[j]] = [deck[j], deck[i]];
+                }
+            }
+
+            function dealCards(n) {
+                return deck.splice(0, n);
+            }
+
+            function renderCard(card, hidden = false) {
+                const color = card.suit === '♥' || card.suit === '♦' ? 'red' : 'black';
+                return `<div class="card ${hidden ? 'hidden' : ''}" style="color: ${color}">${hidden ? '?' : card.rank + card.suit}</div>`;
+            }
+
+            function renderCards(cards, containerId, hidden = false) {
+                $(`#${containerId}`).html(cards.map(card => renderCard(card, hidden)).join(''));
+            }
+
+            function newGame() {
+                deck = createDeck();
+                shuffleDeck(deck);
+                communityCards = [];
+                playerHand = dealCards(2);
+                opponentHand = dealCards(2);
+
+                renderCards(playerHand, 'playerHand');
+                renderCards(opponentHand, 'opponentHand', true);
+                renderCards([], 'communityCards');
+
+                $('#newGame').prop('disabled', true);
+                $('#dealFlop').prop('disabled', false);
+                $('#dealTurn, #dealRiver, #showdown').prop('disabled', true);
+            }
+
+            function dealFlop() {
+                communityCards = dealCards(3);
+                renderCards(communityCards, 'communityCards');
+                $('#dealFlop').prop('disabled', true);
+                $('#dealTurn').prop('disabled', false);
+            }
+
+            function dealTurn() {
+                communityCards.push(dealCards(1)[0]);
+                renderCards(communityCards, 'communityCards');
+                $('#dealTurn').prop('disabled', true);
+                $('#dealRiver').prop('disabled', false);
+            }
+
+            function dealRiver() {
+                communityCards.push(dealCards(1)[0]);
+                renderCards(communityCards, 'communityCards');
+                $('#dealRiver').prop('disabled', true);
+                $('#showdown').prop('disabled', false);
+            }
+
+            function showdown() {
+                renderCards(opponentHand, 'opponentHand');
+                $('#showdown').prop('disabled', true);
+                $('#newGame').prop('disabled', false);
+            }
+
+            $('#newGame').click(newGame);
+            $('#dealFlop').click(dealFlop);
+            $('#dealTurn').click(dealTurn);
+            $('#dealRiver').click(dealRiver);
+            $('#showdown').click(showdown);
+
+            newGame();
+        });
+    </script>
+</body>
+</html>
