@@ -106,6 +106,7 @@ func evaluateHand(hand Hand) (HandRank, int) {
 }
 
 // isRoyalFlush checks if the hand is a royal flush
+// 皇家同花顺
 func isRoyalFlush(hand Hand) (bool, int) {
 	if straightFlush, value := isStraightFlush(hand); straightFlush && value == int(Ace) {
 		return true, value
@@ -114,6 +115,7 @@ func isRoyalFlush(hand Hand) (bool, int) {
 }
 
 // isStraightFlush checks if the hand is a straight flush
+// 同花顺
 func isStraightFlush(hand Hand) (bool, int) {
 	if straight, straightValue := isStraight(hand); straight {
 		if flush, _ := isFlush(hand); flush {
@@ -156,6 +158,7 @@ func isFullHouse(hand Hand) (bool, int) {
 }
 
 // isFlush checks if the hand is a flush
+// 检查是否为同花
 func isFlush(hand Hand) (bool, int) {
 	suitCount := make(map[Suit]int)
 	for _, card := range hand {
@@ -168,14 +171,17 @@ func isFlush(hand Hand) (bool, int) {
 }
 
 // isStraight checks if the hand is a straight
+// 检查是不是顺子
+// 第一个回传值true表示为顺子
+// 第二个回传值为顺子的尾，如果是A-5就回传5，如果是10-A就回传A
 func isStraight(hand Hand) (bool, int) {
 	ranks := make([]int, len(hand))
 	for i, card := range hand {
 		ranks[i] = int(card.Rank)
 	}
 	sort.Ints(ranks)
-	if ranks[len(ranks)-1] == int(Ace) && ranks[0] == int(Two) {
-		return isConsecutive(append([]int{int(Ace)}, ranks[:4]...)), int(Five)
+	if ranks[len(ranks)-1] == int(Ace) && ranks[0] == int(Two) { // 判断如果是A-5的顺子处理
+		return isConsecutive(ranks[:4]), int(Five)
 	}
 	return isConsecutive(ranks), ranks[len(ranks)-1]
 }
