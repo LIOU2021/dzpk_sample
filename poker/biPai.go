@@ -126,6 +126,7 @@ func isStraightFlush(hand Hand) (bool, int) {
 }
 
 // isFourOfAKind checks if the hand contains four of a kind
+// 铁支
 func isFourOfAKind(hand Hand) (bool, int) {
 	rankCount := make(map[Rank]int)
 	for _, card := range hand {
