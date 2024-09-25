@@ -247,3 +247,17 @@ func highCardValue(hand Hand) int {
 	}
 	return maxRank
 }
+
+// 找出散牌中指定第index大的牌
+// index: 0表示找最大，1表示找第二大，以此类推
+func highCardValueV2(hand Hand, index int) int {
+	ranks := make([]int, len(hand))
+	for i, card := range hand {
+		ranks[i] = int(card.Rank)
+	}
+	sort.Ints(ranks)
+
+	ln := len(hand)
+
+	return ranks[ln-1-index]
+}

@@ -56,3 +56,17 @@ func Test_isStraight(t *testing.T) {
 	assert.False(t, ans)
 	assert.Equal(t, int(Ace), v)
 }
+
+// 测试找出散牌中第n大的牌
+func Test_highCardValueV2(t *testing.T) {
+	hand1 := []Card{
+		{Suit: Hearts, Rank: Four},
+		{Suit: Hearts, Rank: Five},
+		{Suit: Hearts, Rank: Ace},
+		{Suit: Hearts, Rank: Three},
+		{Suit: Hearts, Rank: Two},
+	}
+
+	assert.Equal(t, int(Ace), highCardValueV2(hand1, 0))
+	assert.Equal(t, int(Five), highCardValueV2(hand1, 1))
+}
