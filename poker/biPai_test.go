@@ -43,4 +43,16 @@ func Test_isStraight(t *testing.T) {
 	ans, v = isStraight(hand3)
 	assert.True(t, ans)
 	assert.Equal(t, int(Jack), v)
+
+	// test error case
+	hand4 := []Card{
+		{Suit: Hearts, Rank: Ace},
+		{Suit: Hearts, Rank: Seven},
+		{Suit: Hearts, Rank: Ten},
+		{Suit: Hearts, Rank: Nine},
+		{Suit: Hearts, Rank: Eight},
+	}
+	ans, v = isStraight(hand4)
+	assert.False(t, ans)
+	assert.Equal(t, int(Ace), v)
 }
